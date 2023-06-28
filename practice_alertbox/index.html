@@ -21,11 +21,11 @@
 
     <script>
       document
-        .getElementById("close-btn")
+        .querySelector("#close-btn")
         .addEventListener("click", () => toggleAlert("alert", false));
 
       const toggleAlert = (id, state, title) => {
-        const alertBox = document.getElementById(id);
+        const alertBox = document.querySelector(`#${id}`);
         alertBox.style.display = state ? "block" : "none";
         alertBox.children[0].innerHTML = title;
       };
