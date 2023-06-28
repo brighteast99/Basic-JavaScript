@@ -1,0 +1,15 @@
+.alert-box {
+  background-color: skyblue;
+  color: white;
+  padding: 1em;
+  border-radius: 5px;
+  display: none;
+}
+
+.close-btn {
+  float: right;
+}
+
+.close-btn::after {
+  clear: both;
+}
