@@ -50,20 +50,18 @@
       <li class="list-group-item">And a fifth one</li>
     </ul>
 
-    <button id="open-modal" class="btn btn-primary">모달 열기</button>
+    <button id="open-modal" class="btn btn-primary">로그인</button>
 
     <script>
       $(".navbar-brand").html("Navigation bar");
-      $(".list-group").hide();
-      $("#modal").hide();
       //JQuery is applied to all elements selected by the selector
       $(".list-group-item").css("backgroundColor", "#fcfcfc");
 
       $(".navbar-toggler").on("click", () => {
-        $(".list-group").slideToggle();
+        $(".list-group").toggleClass("list-expanded");
       });
-      $("#open-modal").on("click", () => $("#modal").fadeIn(100));
-      $("#close").on("click", () => $("#modal").fadeOut(100));
+      $("#open-modal").on("click", () => $("#modal").addClass("show"));
+      $("#close").on("click", () => $("#modal").removeClass("show"));
     </script>
     <!-- Bootstrap -->
     <script
