@@ -146,7 +146,20 @@
           e.preventDefault();
         }
       });
-      $("#close").on("click", () => $("#modal").removeClass("show"));
+      $("#close").on("click", closeModal);
+      $(".black-bg").on("click", function (e) {
+        e.stopPropagation();
+
+        // e.currentTarget 대신 this도 가능.
+        // 단, 콜백을 화살표 함수로 넘겨준 경우 안 됨(함수 자체의 this 없음)
+        if (!$(e.target).is($(e.currentTarget))) return;
+
+        closeModal();
+      });
+
+      function closeModal() {
+        $("#modal").removeClass("show");
+      }
 
       const interval = setInterval(function () {
         this.timeLeft = (this.timeLeft ?? 5) - 1;
@@ -182,6 +195,11 @@
         carousel = Math.min(carousel + 1, max - 1);
         updateCarousel();
       });
+
+      setInterval(() => {
+        carousel = (carousel + 1) % max;
+        updateCarousel();
+      }, 5000);
 
       function updateCarousel() {
         $(".carousel-inner").css(

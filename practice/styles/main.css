@@ -81,6 +81,10 @@ progress.scroll-progress::-webkit-progress-value {
   background-color: #4163ff;
 }
 
+nav.navbar.compact ~ .list-group {
+  margin-top: 60px;
+}
+
 .list-group {
   position: fixed;
   width: 100%;
@@ -88,7 +92,7 @@ progress.scroll-progress::-webkit-progress-value {
   margin-top: 80px;
   border-radius: 0;
   overflow: hidden;
-  transition: all 0.2s;
+  transition: all 0.25s;
   z-index: 1;
 }
 
@@ -157,6 +161,7 @@ progress.scroll-progress::-webkit-progress-value {
   font-size: 5em;
   user-select: none;
   cursor: pointer;
+  opacity: 50%;
 }
 
 .carousel-prev {
