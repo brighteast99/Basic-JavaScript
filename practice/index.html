@@ -48,16 +48,17 @@
     </div>
 
     <nav class="navbar bg-light">
-      <div class="container-fluid">
+      <div class="container min-vw-100">
         <span class="navbar-brand">Navbar</span>
-        <span class="badge bg-dark" style="cursor: pointer; user-select: none"
-          >Dark 🔄</span
-        >
+        <span class="badge bg-dark" style="cursor: pointer; user-select: none">
+          Dark 🔄
+        </span>
         <button class="navbar-toggler" type="button">
           <span class="navbar-toggler-icon"></span>
         </button>
       </div>
     </nav>
+    <progress class="scroll-progress"></progress>
 
     <ul class="list-group">
       <li class="list-group-item">An item</li>
@@ -67,28 +68,50 @@
       <li class="list-group-item">And a fifth one</li>
     </ul>
 
-    <div class="w-100 p-5 bg-dark-subtle" style="height: 200px">
-      <h1>Welcome!</h1>
-      <button id="open-modal" class="btn btn-primary">로그인</button>
-    </div>
-
-    <div id="alert" class="alert alert-danger">
-      5초 이내에 구매시 사은품 증정!
-    </div>
-
-    <div class="carousel">
-      <div class="carousel-inner">
-        <div class="item"><img src="./resources/car1.png" /></div>
-        <div class="item"><img src="./resources/car2.png" /></div>
-        <div class="item"><img src="./resources/car3.png" /></div>
-        <div class="item"><img src="./resources/car1.png" /></div>
-        <div class="item"><img src="./resources/car2.png" /></div>
-        <div class="item"><img src="./resources/car3.png" /></div>
+    <main>
+      <div class="w-100 p-5 bg-dark-subtle" style="height: 200px">
+        <h1>Welcome!</h1>
+        <button id="open-modal" class="btn btn-primary">로그인</button>
       </div>
-      <div class="carousel-prev">＜</div>
-      <div class="carousel-next">＞</div>
-      <div class="carousel-control"></div>
-    </div>
+
+      <div id="alert" class="alert alert-danger">
+        5초 이내에 구매시 사은품 증정!
+      </div>
+
+      <div class="carousel">
+        <div class="carousel-inner">
+          <div class="item"><img src="./resources/car1.png" /></div>
+          <div class="item"><img src="./resources/car2.png" /></div>
+          <div class="item"><img src="./resources/car3.png" /></div>
+          <div class="item"><img src="./resources/car1.png" /></div>
+          <div class="item"><img src="./resources/car2.png" /></div>
+          <div class="item"><img src="./resources/car3.png" /></div>
+        </div>
+        <div class="carousel-prev">＜</div>
+        <div class="carousel-next">＞</div>
+        <div class="carousel-control"></div>
+      </div>
+
+      <div style="margin: auto; width: 500px; height: 1000px">
+        <h3 class="text-center">약관</h3>
+        <div id="rule" style="height: 200px; overflow: auto">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet, quas!
+          Voluptas ea ab autem odit nam sunt laborum, sequi ratione expedita,
+          tenetur deleniti tempore animi maxime quas, vel eaque omnis!Lorem
+          ipsum dolor sit amet consectetur adipisicing elit. Amet, quas!
+          Voluptas ea ab autem odit nam sunt laborum, sequi ratione expedita,
+          tenetur deleniti tempore animi maxime quas, vel eaque omnis!Lorem
+          ipsum dolor sit amet consectetur adipisicing elit. Amet, quas!
+          Voluptas ea ab autem odit nam sunt laborum, sequi ratione expedita,
+          tenetur deleniti tempore animi maxime quas, vel eaque omnis!Lorem
+          ipsum dolor sit amet consectetur adipisicing elit. Amet, quas!
+          Voluptas ea ab autem odit nam sunt laborum, sequi ratione expedita,
+          tenetur deleniti tempore animi maxime quas, vel eaque omnis!
+        </div>
+        <input id="consent" type="checkbox" disabled />
+        <label for="consent">동의합니다</label>
+      </div>
+    </main>
 
     <script>
       $(".navbar-brand").html("Navigation bar");
@@ -99,7 +122,7 @@
         $(".list-group").toggleClass("list-expanded");
       });
 
-      $(".badge").on("click", function toggleDarkMode() {
+      $(".badge").on("click", function () {
         this.darkMode = !(this.darkMode ?? false);
         $(".badge").text((this.darkMode ? "Light" : "Dark") + " 🔄");
       });
@@ -125,7 +148,7 @@
       });
       $("#close").on("click", () => $("#modal").removeClass("show"));
 
-      const interval = setInterval(function updateMessage() {
+      const interval = setInterval(function () {
         this.timeLeft = (this.timeLeft ?? 5) - 1;
         $("#alert").html(`${this.timeLeft}초 이내에 구매시 사은품 증정!`);
         if (this.timeLeft == 0) {
@@ -174,6 +197,24 @@
         $(".carousel-control>button").removeClass("active");
         $(`#carousel-${carousel}`).addClass("active");
       }
+
+      $(window).on("scroll", () => {
+        if ($(window).scrollTop() > 20) $(".navbar").addClass("compact");
+        else $(".navbar").removeClass("compact");
+
+        $(".scroll-progress").prop(
+          "value",
+          document.documentElement.scrollTop /
+            (document.documentElement.scrollHeight -
+              document.documentElement.clientHeight)
+        );
+      });
+
+      $("#rule").on("scroll", (e) => {
+        const box = $("#rule");
+        const threshold = (box.prop("scrollHeight") - box.height()) * 0.95;
+        if (box.scrollTop() >= threshold) $("#consent").prop("disabled", false);
+      });
     </script>
     <!-- Bootstrap -->
     <script
