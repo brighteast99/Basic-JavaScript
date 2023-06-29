@@ -76,6 +76,20 @@
       5초 이내에 구매시 사은품 증정!
     </div>
 
+    <div class="carousel">
+      <div class="carousel-inner">
+        <div class="item"><img src="./resources/car1.png" /></div>
+        <div class="item"><img src="./resources/car2.png" /></div>
+        <div class="item"><img src="./resources/car3.png" /></div>
+        <div class="item"><img src="./resources/car1.png" /></div>
+        <div class="item"><img src="./resources/car2.png" /></div>
+        <div class="item"><img src="./resources/car3.png" /></div>
+      </div>
+      <div class="carousel-prev">＜</div>
+      <div class="carousel-next">＞</div>
+      <div class="carousel-control"></div>
+    </div>
+
     <script>
       $(".navbar-brand").html("Navigation bar");
       //JQuery is applied to all elements selected by the selector
@@ -119,6 +133,47 @@
           clearInterval(interval);
         }
       }, 1000);
+
+      let carousel = 0;
+      const max = $(".carousel-inner").children().length;
+      for (let i = 0; i < max; i++)
+        $(".carousel-control").append(
+          `<button id="carousel-${i}" type="button"></button>`
+        );
+
+      $("#carousel-0").addClass("active");
+      $(".carousel-prev").hide();
+      if (max == 1) $(".carousel-next").hide();
+
+      $(".carousel-control>button").on("click", (e) => {
+        carousel = e.target.id.split("-")[1];
+        updateCarousel();
+      });
+
+      $(".carousel-prev").on("click", () => {
+        carousel = Math.max(carousel - 1, 0);
+        updateCarousel();
+      });
+
+      $(".carousel-next").on("click", () => {
+        carousel = Math.min(carousel + 1, max - 1);
+        updateCarousel();
+      });
+
+      function updateCarousel() {
+        $(".carousel-inner").css(
+          "transform",
+          `translateX(${-100 * carousel}vw)`
+        );
+        if (carousel == max - 1) $(".carousel-next").hide();
+        else $(".carousel-next").show();
+
+        if (carousel == 0) $(".carousel-prev").hide();
+        else $(".carousel-prev").show();
+
+        $(".carousel-control>button").removeClass("active");
+        $(`#carousel-${carousel}`).addClass("active");
+      }
     </script>
     <!-- Bootstrap -->
     <script
