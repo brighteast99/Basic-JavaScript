@@ -26,7 +26,7 @@
 
         <form action="success.html">
           <div class="my-3">
-            <input name="id" type="text" class="form-control" />
+            <input name="email" type="text" class="form-control" />
           </div>
           <div class="my-3">
             <input name="pw" type="password" class="form-control" />
@@ -72,6 +72,10 @@
       <button id="open-modal" class="btn btn-primary">로그인</button>
     </div>
 
+    <div id="alert" class="alert alert-danger">
+      5초 이내에 구매시 사은품 증정!
+    </div>
+
     <script>
       $(".navbar-brand").html("Navigation bar");
       //JQuery is applied to all elements selected by the selector
@@ -88,20 +92,33 @@
 
       $("#open-modal").on("click", () => $("#modal").addClass("show"));
       $("form").on("submit", (e) => {
-        if (
-          !$("input[name=id]").val().length ||
-          !$("input[name=pw]").val().length
-        ) {
-          alert("입력값이 없습니다.");
-          e.preventDefault();
-        }
+        const email = $("input[name=email]").val(),
+          pw = $("input[name=pw]").val();
 
-        if (!$("input[name=pw]").val().length < 6) {
-          alert("비밀번호가 너무 짧습니다.");
+        try {
+          if (!email.length || !pw.length) throw "입력값이 없습니다.";
+
+          if (!/\S+@\S+\.\S+/.test(email)) throw "이메일 형식이 필요합니다.";
+
+          if (pw.length < 6) throw "비밀번호가 너무 짧습니다.";
+
+          if (!/[A-Z]/.test(pw))
+            throw "비밀번호에는 영어 대문자가 1글자 이상 포함되어야 합니다.";
+        } catch (err) {
+          alert(err);
           e.preventDefault();
         }
       });
       $("#close").on("click", () => $("#modal").removeClass("show"));
+
+      const interval = setInterval(function updateMessage() {
+        this.timeLeft = (this.timeLeft ?? 5) - 1;
+        $("#alert").html(`${this.timeLeft}초 이내에 구매시 사은품 증정!`);
+        if (this.timeLeft == 0) {
+          $("#alert").hide();
+          clearInterval(interval);
+        }
+      }, 1000);
     </script>
     <!-- Bootstrap -->
     <script
