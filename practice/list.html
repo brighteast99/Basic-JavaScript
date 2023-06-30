@@ -12,6 +12,12 @@
     />
     <link href="./styles/detail.css" rel="stylesheet" />
 
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
+    />
+
     <!-- JQuery -->
     <script
       src="https://code.jquery.com/jquery-3.7.0.min.js"
@@ -45,11 +51,18 @@
           </select>
         </div>
       </div>
-      <div id="list" class="row my-3">
+      <div id="list" class="row my-3 gy-3">
         <div id="card-template" class="col-sm-4" style="display: none">
           <img src="https://via.placeholder.com/600" class="w-100" />
-          <h5>Card title</h5>
-          <p>가격 : 70000</p>
+          <h5>상품 이름</h5>
+          <p>가격 : 상품 가격</p>
+          <button
+            id="add-cart"
+            class="btn btn-sm btn-success"
+            onclick="addCart(this)"
+          >
+            <i class="fa fa-cart-plus me-2"></i>장바구니에 담기
+          </button>
         </div>
       </div>
       <div class="row my-3 px-2">
@@ -58,7 +71,7 @@
     </div>
 
     <script>
-      var products = [
+      let products = [
         { id: 0, price: 70000, title: "Blossom Dress" },
         { id: 1, price: 50000, title: "Springfield Shirt" },
         { id: 2, price: 60000, title: "Black Monastery" },
@@ -121,6 +134,20 @@
             appendItem(...products);
         }
       });
+
+      function addCart(caller) {
+        if (!this.cart)
+          this.cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        const item = $(caller).siblings("h5").text();
+
+        if (cart.includes(item))
+          return alert("이미 장바구니에 담긴 상품입니다.");
+
+        cart.push(item);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        alert("장바구니에 추가되었습니다");
+      }
     </script>
     <!-- Bootstrap -->
     <script
