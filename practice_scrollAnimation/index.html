@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Document</title>
+
+    <link href="./styles/main.css" rel="stylesheet" />
+    <!-- JQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="card-background">
+      <div class="card-box"><img src="./resources/card1.png" /></div>
+      <div class="card-box"><img src="./resources/card2.png" /></div>
+      <div class="card-box"><img src="./resources/card3.png" /></div>
+    </div>
+
+    <script>
+      $(window).scroll(function () {
+        console.log(this.scrollY);
+        if (!this.cards) this.cards = $(".card-box");
+
+        this.cards.each((i, card) => {
+          if (i == 2) return;
+          card.style.opacity =
+            1 - animationProgress(i, card.clientHeight, this.scrollY);
+          card.style.transform = `scale(${
+            1 - 0.1 * animationProgress(i, card.clientHeight, this.scrollY, 0.6)
+          })`;
+        });
+      });
+
+      function animationProgress(index, boxHeight, scroll, _overlap) {
+        const startPoint = 400;
+        const margin = 400;
+        const overlap = _overlap ?? 0.3;
+
+        let progress =
+          (scroll -
+            startPoint -
+            (1 + 2 * index) * margin -
+            boxHeight * overlap) /
+          (boxHeight * (1 - overlap));
+
+        if (progress > 1) progress = 1;
+        if (progress < 0) progress = 0;
+
+        return progress;
+      }
+    </script>
+  </body>
+</html>
