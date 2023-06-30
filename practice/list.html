@@ -20,30 +20,40 @@
     ></script>
   </head>
   <body>
-    <div class="card-group container">
-      <div class="card">
-        <img src="https://via.placeholder.com/600" />
-        <div class="card-body">
-          <h5>Card title</h5>
-          <p>가격 : 70000</p>
-          <button class="btn btn-danger">주문하기</button>
+    <div class="container">
+      <div class="row my-3 align-items-center gx-1">
+        <div class="col-2">
+          <input id="price-min" class="form-control h-25" />
+        </div>
+        <div class="col-auto">~</div>
+        <div class="col-2">
+          <input id="price-max" class="form-control h-25" />
+        </div>
+        <div class="col-auto">원 사이</div>
+        <div class="col-auto ms-3">
+          <button id="price-filter" class="btn btn-primary py-1">적용</button>
+        </div>
+        <div class="col"></div>
+
+        <div class="col-auto">
+          <select id="sortby" class="form-select py-1">
+            <option>정렬 기준</option>
+            <option value="name">사전순</option>
+            <option value="name-reverse">사전 역순</option>
+            <option value="price">가격낮은순</option>
+            <option value="price-reverse">가격높은순</option>
+          </select>
         </div>
       </div>
-      <div class="card">
-        <img src="https://via.placeholder.com/600" />
-        <div class="card-body">
+      <div id="list" class="row my-3">
+        <div id="card-template" class="col-sm-4" style="display: none">
+          <img src="https://via.placeholder.com/600" class="w-100" />
           <h5>Card title</h5>
           <p>가격 : 70000</p>
-          <button class="btn btn-danger">주문하기</button>
         </div>
       </div>
-      <div class="card">
-        <img src="https://via.placeholder.com/600" />
-        <div class="card-body">
-          <h5>Card title</h5>
-          <p>가격 : 70000</p>
-          <button class="btn btn-danger">주문하기</button>
-        </div>
+      <div class="row my-3 px-2">
+        <div id="load-more" class="btn btn-primary">더보기</div>
       </div>
     </div>
 
@@ -53,12 +63,64 @@
         { id: 1, price: 50000, title: "Springfield Shirt" },
         { id: 2, price: 60000, title: "Black Monastery" },
       ];
-      $(".card-body h5").map(
-        (i, target) => (target.innerHTML = products[i].title)
-      );
-      $(".card-body p").map(
-        (i, target) => (target.innerHTML = `가격: ${products[i].price}`)
-      );
+      const list = $("#list");
+      const card = $("#card-template");
+
+      appendItem(...products);
+
+      $("#load-more").click(() => {
+        if (products.length < 9)
+          $.get(
+            `https://codingapple1.github.io/js/more${products.length / 3}.json`
+          ).done((data) => {
+            products.push(...data);
+            appendItem(...data);
+            if (products.length == 9) $("#load-more").hide();
+          });
+      });
+
+      function appendItem(...items) {
+        items.forEach((item) => {
+          const copy = card.clone();
+          copy.find("h5").text(item.title);
+          copy.find("p").text(`가격: ${item.price}`);
+          list.append(copy.removeAttr("id").show());
+        });
+      }
+
+      $("#price-filter").click(() => {
+        const min = $("#price-min").val() || 0;
+        const max = $("#price-max").val() || Number.MAX_VALUE;
+
+        list.children().remove();
+        appendItem(
+          ...products.filter((item) => item.price >= min && item.price < max)
+        );
+      });
+
+      $("#sortby").change(function () {
+        list.children().remove();
+        switch (this.value) {
+          case "name":
+            appendItem(
+              ...products.toSorted((a, b) => a.title.localeCompare(b.title))
+            );
+            break;
+          case "name-reverse":
+            appendItem(
+              ...products.toSorted((a, b) => b.title.localeCompare(a.title))
+            );
+            break;
+          case "price":
+            appendItem(...products.toSorted((a, b) => a.price - b.price));
+            break;
+          case "price-reverse":
+            appendItem(...products.toSorted((a, b) => b.price - a.price));
+            break;
+          default:
+            appendItem(...products);
+        }
+      });
     </script>
     <!-- Bootstrap -->
     <script
