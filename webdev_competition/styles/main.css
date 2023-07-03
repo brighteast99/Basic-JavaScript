@@ -1,0 +1,117 @@
+.navbar {
+  position: fixed;
+  z-index: 1;
+}
+
+.modal-scrim {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  padding: 30px;
+
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.1s;
+}
+.modal-card {
+  position: absolute;
+  width: 30rem;
+
+  background: white;
+  border-radius: 5px;
+  padding: 15px;
+
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  transform: translateY(-50%);
+}
+
+.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+#receipt .card-body {
+  max-height: 40dvh;
+  overflow: scroll;
+}
+
+.card-body canvas {
+  width: 100%;
+}
+
+main {
+  padding-top: 56px;
+  height: 100dvh;
+  overflow: auto;
+  background-color: #f0f0f0;
+}
+
+#input-search-keyword {
+  width: 15dvw;
+}
+
+.row {
+  margin: 1em 0 1em 0;
+}
+
+#view-item-list {
+  position: relative;
+  min-height: 300px;
+}
+
+#view-item-list:has(div:not(.template)) .ph {
+  display: none;
+}
+
+.card:has(.card-img) {
+  min-width: 150px;
+  width: 10dvw;
+}
+
+.card:has(.card-img) p {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.card-img {
+  width: 100%;
+  aspect-ratio: 1;
+  background-size: cover;
+  background-position: center;
+}
+
+p {
+  margin-bottom: 0;
+}
+
+.text-small {
+  font-size: 0.9em;
+}
+
+div:has(> #view-cart) {
+  background-color: #c0c0c0;
+}
+
+#view-cart {
+  position: relative;
+  background-color: black;
+  width: 100%;
+  min-height: 400px;
+  margin: inherit 0 inherit;
+  padding: 1em;
+}
+
+#view-cart:has(div:not(.template)) .ph {
+  display: none;
+}
+
+.template {
+  display: none;
+}

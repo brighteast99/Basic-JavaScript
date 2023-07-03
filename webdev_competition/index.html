@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Document</title>
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <link href="./styles/main.css" rel="stylesheet" />
+
+    <!-- JQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="navbar navbar-expand bg-dark navbar-dark">
+      <div class="container min-vw-100">
+        <a class="navbar-brand" href="./">집꾸미기</a>
+        <div class="navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a href="#" class="nav-link active">Home</a>
+            </li>
+            <li class="nav-item"><a href="#" class="nav-link">스토어</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">시공견적</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal" class="modal-scrim">
+      <div class="modal-card">
+        <form id="form-customer-info">
+          <div class="my-3">
+            <label for="form-input-name" class="p-0">성함</label>
+            <input id="form-input-name" type="text" class="form-control" />
+          </div>
+          <div class="my-3">
+            <label for="form-input-contact" class="p-0">연락처</label>
+            <input id="form-input-contact" type="text" class="form-control" />
+          </div>
+
+          <div class="row">
+            <div class="col-auto ps-0">
+              <button type="submit" class="btn btn-dark">구매 확인</button>
+            </div>
+            <div class="col-auto ps-0">
+              <button
+                type="reset"
+                class="btn btn-dark"
+                onclick="closeModal('modal')"
+              >
+                닫기
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="receipt" class="modal-scrim">
+      <div class="card modal-card p-0">
+        <div class="card-header d-flex">
+          <div class="flex-grow-1"></div>
+          <button class="btn close-btn" onclick="closeModal('receipt')">
+            X
+          </button>
+        </div>
+        <div class="card-body p-2">
+          <canvas id="receipt-content" width="600"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <div class="container min-vw-100 p-3">
+        <input
+          id="input-search-keyword"
+          class="form-control"
+          type="text"
+          placeholder="검색어 입력"
+        />
+
+        <div id="view-item-list" class="row justify-content-start g-3">
+          <p class="position-absolute text-center top-50 ph">
+            조건에 맞는 상품이 없습니다
+          </p>
+          <div id="card-item-info" class="col-auto template">
+            <div class="card p-3" draggable="true">
+              <div id="item-info-image" class="card-img mb-3"></div>
+              <p id="item-info-title" class="card-title fw-bold mb-0">
+                상품 이름
+              </p>
+              <p
+                id="item-info-brand"
+                class="card-text text-black-50 text-small mb-1"
+              >
+                브랜드
+              </p>
+              <p class="card-text mb-2"><span id="item-info-price"></span> ₩</p>
+              <button class="btn btn-dark" data-id="#">담기</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="container px-3">
+            <p class="fw-bold mt-4 fs-5">장바구니</p>
+
+            <div
+              id="view-cart"
+              class="row black-bg text-white align-items-center justify-content-center g-3"
+            >
+              <p class="position-absolute text-center top-50 ph">
+                여기로 드래그
+              </p>
+
+              <div id="card-cart-item" class="col-auto template">
+                <div class="card p-3 text-center">
+                  <div id="item-info-image" class="card-img mb-3"></div>
+                  <p id="item-info-title" class="card-title fw-bold mb-0">
+                    식기세척기
+                  </p>
+                  <p
+                    id="item-info-brand"
+                    class="card-text text-black-50 text-small mb-2"
+                  >
+                    브랜드
+                  </p>
+                  <p class="card-text mb-2">
+                    <span id="item-info-price"></span> ₩
+                  </p>
+                  <input type="text" class="form-control text-center" />
+                </div>
+              </div>
+            </div>
+
+            <div class="row text-center">
+              <p class="fw-bold fs-5">
+                총 주문금액: <span id="view-total-price">0</span> ₩
+              </p>
+            </div>
+
+            <div class="row justify-content-center">
+              <div class="col-4">
+                <button id="btn-purchase" class="btn btn-dark w-100" disabled>
+                  구매하기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      const modal = $("#modal");
+      const searchBar = $("#input-search-keyword");
+      const listView = $("#view-item-list");
+      const cartView = $("#view-cart");
+      const totalPriceView = $("#view-total-price");
+      const purchaseBtn = $("#btn-purchase");
+      const listItemTemplate = $("#card-item-info.template");
+      const cartItemTemplate = $("#card-cart-item.template");
+
+      let items = [];
+      let filtered = null;
+      let cart = [];
+
+      $.get("./resources/store.json").done((data) => {
+        items.push(...data.products);
+        updateList();
+        updateReceipt();
+      });
+
+      modal.click(() => closeModal("modal"));
+      $(".modal-card").click((e) => e.stopPropagation());
+      modal.find('button[type="submit"]').click((e) => {
+        e.preventDefault();
+
+        if (!$("#form-input-name").val() || !$("#form-input-contact").val())
+          return alert("구매자 정보를 모두 입력해주세요");
+
+        closeModal("modal");
+        updateReceipt();
+        openModal("receipt");
+      });
+
+      searchBar.on("change", (e) => filter(e.currentTarget.value));
+
+      cartView.on("dragover", (e) => {
+        e.originalEvent.preventDefault();
+      });
+      cartView.on("drop", (e) => {
+        addCart(e.originalEvent.dataTransfer.getData("idx"));
+      });
+
+      purchaseBtn.click(() => openModal("modal"));
+
+      function filter(keyword) {
+        if (keyword)
+          filtered = items.filter((item) => item.title.includes(keyword));
+        else filtered = null;
+        updateList();
+      }
+
+      function updateList() {
+        listView.children("div").remove();
+
+        (filtered || items).forEach((item) => {
+          const newItem = initItem(listItemTemplate.clone(), item);
+
+          newItem
+            .find("button")
+            .attr("data-id", item.id)
+            .click(() => {
+              addCart(item.id);
+            });
+          newItem.on("dragstart", (e) =>
+            e.originalEvent.dataTransfer.setData("idx", item.id)
+          );
+
+          if (filtered) {
+            newItem
+              .find("#item-info-title")
+              .html(
+                item.title.replaceAll(
+                  searchBar.val(),
+                  `<span style="background-color: yellow">${searchBar.val()}</span>`
+                )
+              );
+          }
+
+          listView.append(newItem);
+        });
+      }
+
+      function addCart(id) {
+        let cartItem = cart.find((item) => item.id == id);
+
+        if (cartItem) {
+          cartItem.count++;
+          $(`#card-cart-item[data-id="${id}"] input`).prop(
+            "value",
+            cartItem.count
+          );
+        } else {
+          const item = items.find((item) => item.id == id);
+          cartItem = {
+            id: id,
+            title: item.title,
+            price: item.price,
+            count: 1,
+          };
+          cart.push(cartItem);
+
+          const newItem = initItem(cartItemTemplate.clone(), id);
+          newItem.attr("data-id", id);
+
+          newItem
+            .find("input")
+            .prop("value", cartItem.count)
+            .change((e) => {
+              cartItem.count = parseInt(e.currentTarget.value) || 1;
+              e.currentTarget.value = cartItem.count;
+              updateTotalPrice();
+            });
+
+          cartView.append(newItem);
+        }
+        updateTotalPrice();
+      }
+
+      function initItem(elem, data) {
+        if (typeof data != "object")
+          data = items.find((item) => item.id == data);
+
+        elem.removeClass("template");
+        elem
+          .find("#item-info-image")
+          .css("background-image", `url("./resources/${data.photo}")`);
+        elem.find("#item-info-title").html(data.title);
+        elem.find("#item-info-brand").html(data.brand);
+        elem.find("#item-info-price").html(data.price.toLocaleString());
+        return elem;
+      }
+
+      function updateTotalPrice() {
+        const totalPrice = cart.reduce(
+          (accum, item) => accum + item.price * item.count,
+          0
+        );
+
+        totalPriceView.html(totalPrice.toLocaleString());
+
+        purchaseBtn.prop("disabled", !totalPrice);
+      }
+
+      function openModal(id) {
+        $(`#${id}`).addClass("show");
+      }
+
+      function closeModal(id) {
+        if (id == "modal") $("#form-customer-info")[0].reset();
+        $(`#${id}`).removeClass("show");
+      }
+
+      function updateReceipt() {
+        const canvas = $("#receipt-content")[0];
+        const ctx = canvas.getContext("2d");
+        let y = 30;
+
+        canvas.height = 200 + cart.length * 30;
+        console.log(canvas.height);
+
+        ctx.font = "30px dotum bold";
+        ctx.fillText("영수증", 10, y);
+        y += 25;
+
+        ctx.font = "16px dotum";
+        ctx.fillText(
+          new Date().toLocaleString(undefined, {
+            hour12: false,
+            dateStyle: "long",
+            timeStyle: "medium",
+          }),
+          15,
+          y
+        );
+        y += 40;
+
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5]);
+        ctx.beginPath();
+        ctx.moveTo(10, y);
+        ctx.lineTo(590, y);
+        ctx.stroke();
+        y += 27;
+
+        ctx.font = "20px dotum";
+        ctx.textAlign = "center";
+        ctx.fillText("상품명", 100, y);
+        ctx.fillText("단가", 345, y);
+        ctx.fillText("수량", 430, y);
+        ctx.fillText("금액", 540, y);
+        y += 13;
+
+        ctx.beginPath();
+        ctx.moveTo(10, y);
+        ctx.lineTo(590, y);
+        ctx.stroke();
+        y += 30;
+
+        cart.forEach((item) => {
+          ctx.textAlign = "start";
+          ctx.fillText(item.title, 20, y);
+          ctx.textAlign = "end";
+          ctx.fillText(item.price.toLocaleString(), 380, y);
+          ctx.textAlign = "center";
+          ctx.fillText(item.count, 430, y);
+          ctx.textAlign = "end";
+          ctx.fillText((item.price * item.count).toLocaleString(), 580, y);
+          y += 30;
+        });
+
+        y -= 15;
+
+        ctx.beginPath();
+        ctx.moveTo(10, y);
+        ctx.lineTo(590, y);
+        ctx.stroke();
+
+        y += 30;
+
+        ctx.textAlign = "start";
+        ctx.fillText("합계", 20, y);
+        ctx.textAlign = "end";
+        ctx.fillText(
+          `${cart
+            .reduce((accum, item) => accum + item.price * item.count, 0)
+            .toLocaleString()} ₩`,
+          580,
+          y
+        );
+        y += 10;
+
+        ctx.beginPath();
+        ctx.moveTo(10, y);
+        ctx.lineTo(590, y);
+        ctx.stroke();
+      }
+      con;
+    </script>
+    <!-- Bootstrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
