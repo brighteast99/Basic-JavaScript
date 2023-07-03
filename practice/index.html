@@ -80,12 +80,24 @@
 
       <div class="carousel">
         <div class="carousel-inner">
-          <div class="item"><img src="./resources/car1.png" /></div>
-          <div class="item"><img src="./resources/car2.png" /></div>
-          <div class="item"><img src="./resources/car3.png" /></div>
-          <div class="item"><img src="./resources/car1.png" /></div>
-          <div class="item"><img src="./resources/car2.png" /></div>
-          <div class="item"><img src="./resources/car3.png" /></div>
+          <div class="item">
+            <img src="./resources/car1.png" draggable="false" />
+          </div>
+          <div class="item">
+            <img src="./resources/car2.png" draggable="false" />
+          </div>
+          <div class="item">
+            <img src="./resources/car3.png" draggable="false" />
+          </div>
+          <div class="item">
+            <img src="./resources/car1.png" draggable="false" />
+          </div>
+          <div class="item">
+            <img src="./resources/car2.png" draggable="false" />
+          </div>
+          <div class="item">
+            <img src="./resources/car3.png" draggable="false" />
+          </div>
         </div>
         <div class="carousel-prev">＜</div>
         <div class="carousel-next">＞</div>
@@ -170,52 +182,6 @@
         }
       }, 1000);
 
-      let carousel = 0;
-      const max = $(".carousel-inner").children().length;
-      for (let i = 0; i < max; i++)
-        $(".carousel-control").append(
-          `<button id="carousel-${i}" type="button"></button>`
-        );
-
-      $("#carousel-0").addClass("active");
-      $(".carousel-prev").hide();
-      if (max == 1) $(".carousel-next").hide();
-
-      $(".carousel-control>button").on("click", (e) => {
-        carousel = e.target.id.split("-")[1];
-        updateCarousel();
-      });
-
-      $(".carousel-prev").on("click", () => {
-        carousel = Math.max(carousel - 1, 0);
-        updateCarousel();
-      });
-
-      $(".carousel-next").on("click", () => {
-        carousel = Math.min(carousel + 1, max - 1);
-        updateCarousel();
-      });
-
-      setInterval(() => {
-        carousel = (carousel + 1) % max;
-        updateCarousel();
-      }, 5000);
-
-      function updateCarousel() {
-        $(".carousel-inner").css(
-          "transform",
-          `translateX(${-100 * carousel}vw)`
-        );
-        if (carousel == max - 1) $(".carousel-next").hide();
-        else $(".carousel-next").show();
-
-        if (carousel == 0) $(".carousel-prev").hide();
-        else $(".carousel-prev").show();
-
-        $(".carousel-control>button").removeClass("active");
-        $(`#carousel-${carousel}`).addClass("active");
-      }
-
       $(window).on("scroll", () => {
         if ($(window).scrollTop() > 20) $(".navbar").addClass("compact");
         else $(".navbar").removeClass("compact");
@@ -234,6 +200,7 @@
         if (box.scrollTop() >= threshold) $("#consent").prop("disabled", false);
       });
     </script>
+    <script src="./carousel.js"></script>
     <!-- Bootstrap -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
